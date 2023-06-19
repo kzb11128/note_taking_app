@@ -1,18 +1,18 @@
-const db = require('epress').Router();
+const db = require('express').Router();
 const { v4: uuidv4 } = require('uuid');
 const { readFromFile, readAndAppend, writeToFile } = require('../helpers/fsUtils');
 
-db.get('/', (req, res) => {
+db.get('/api/notes', (req, res) => {
     readFromFile('./db/db.json').then((data) => res.json(JSON.parse(data)));
 }
 );
 
-db.get('/:id', (req, res) => {
-    const dbID = req.params.id;
+db.get('/api/notes/:note_Id', (req, res) => {
+    const notedId = req.params.id;
     readFromFile('./db/db.json')
         .then((data) => JSON.parse(data))
         .then((json) => {
-            const result = json.filter((db) => db.id === dbID);
+            const result = json.filter((db) => db.note_Id === notedId);
             return result.length > 0
                 ? res.json(result)
                 : res.json('No db with that ID');
@@ -21,32 +21,32 @@ db.get('/:id', (req, res) => {
 }
 );
 
-db.post('/', (req, res) => {
+db.post('/api/notes', (req, res) => {
     console.log(req.body);
 
     const { title, text } = req.body;
 
     if (req.body) {
-        const newDB = {
+        const newNote = {
             title,
             text,
-            id: uuidv4(),
+            note_Id: uuidv4(),
         };
 
-        readAndAppend(newDB, './db/db.json');
-        res.json(`db added successfully 🚀`);
+        readAndAppend(newNote, './db/db.json');
+        res.json(`note added successfully`);
     } else {
-        res.error('Error in adding db');
+        res.error('Error in adding note');
     }
 }
 );
 
-db.delete('/:id', (req, res) => {
-    const dbID = req.params.id;
+db.delete('/api/notes/:note_Id', (req, res) => {
+    const noteId = req.params.id;
     readFromFile('./db/db.json')
         .then((data) => JSON.parse(data))
         .then((json) => {
-            const result = json.filter((db) => db.id !== dbID);
+            const result = json.filter((db) => db.note_Id !== noteId);
 
             writeToFile('./db/db.json', result);
 
