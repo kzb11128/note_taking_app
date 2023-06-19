@@ -5,7 +5,7 @@ const {
     readFromFile,
     readAndAppend,
     writeToFile,
-  } = require('./helpers/fsUtils');
+} = require('./helpers/fsUtils');
 const app = express();
 const PORT = process.env.PORT || 3001;
 
@@ -14,7 +14,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
 
 app.get('/notes', (req, res) =>
-  res.sendFile(path.join(__dirname, '/public/notes.html'))
+    res.sendFile(path.join(__dirname, '/public/notes.html'))
 );
 
 app.get('/api/notes', (req, res) => {
@@ -41,19 +41,19 @@ app.post('/api/notes', (req, res) => {
 app.delete('/api/notes/:id', (req, res) => {
     const note_id = req.params.id;
     readFromFile('./db/db.json')
-      .then((data) => JSON.parse(data))
-      .then((json) => {
-        const result = json.filter((tip) => tip.id !== note_id);
-        writeToFile('./db/db.json', result);
-        res.json(`Item ${note_id} has been deleted`);
-      });
-  });
+        .then((data) => JSON.parse(data))
+        .then((json) => {
+            const result = json.filter((tip) => tip.id !== note_id);
+            writeToFile('./db/db.json', result);
+            res.json(`Item ${note_id} has been deleted`);
+        });
+});
 
 app.get('*', (req, res) =>
-  res.sendFile(path.join(__dirname, 'public/index.html'))
+    res.sendFile(path.join(__dirname, 'public/index.html'))
 );
 
-app.listen(PORT, () => 
-console.log(`Listening on at http://localhost:${PORT}`)
+app.listen(PORT, () =>
+    console.log(`Listening on at http://localhost:${PORT}`)
 );
 
